@@ -4,13 +4,21 @@
 > Give me ONE concrete task per session (what to do, what "done" looks like),
 > check my understanding with 2–3 questions afterwards, and review my code.
 > Keep it short — never dump the whole plan on me. Update this file at the
-> end of each session.
+> end of each session. Also read `notes/week1.md` (my answers) and the code in `src/`.
+> When I'm stuck, give hints and questions first; write worked examples only if I ask.
 
 ## Goal
 - Software engineer (3 yrs) with a university AI background → **AI Engineer** role
   (LLM apps, RAG, agents) within 12 weeks.
 - Build GitHub portfolio projects along the way; one LinkedIn post every Friday.
 - Basics revision is capped at ~2 weeks, then go deep.
+
+## Where things live
+| Where | What |
+|---|---|
+| `notes/weekN.md` | My learning notes and answers (one file per week) |
+| `notes/progress.md` | This handover: status and next steps (Claude updates it at the end of each session) |
+| Google Sheet "AI Engineer 12-Week Tracker" | Daily schedule + Status, LinkedIn calendar, Job tracker (I update it) |
 
 ## Weekly rhythm (~12h/week)
 | Day | Time | Session |
@@ -52,19 +60,63 @@ Plan changes agreed with my tutor:
 - [x] `ml-env/` added to `.gitignore`; notebook snapshot committed
 - [x] Split `requirements.txt` (runtime, pinned) and `requirements-dev.txt` (notebook/test tools)
 - [x] Pinned versions to match `ml-env`; Dockerfile now uses `python:3.14-slim`
+- [x] Fri 2026-11-06: model rebuilt with scikit-learn 1.9.1; API works (`/predic` returns a probability)
+- [x] Fri: tracker redesigned and moved to Google Sheets (I update Status there daily)
+- [x] Fri: answered the 5 questions in `notes/week1.md`, reviewed with my tutor
+
+### Week-1 notes review (Fri)
+- Solid: leakage (Q1), keeping the test set for the final measurement (Q3).
+- Fixed: precision 0.48 means **48%**, not 0.48%.
+- Q2 and Q5 rewritten and all 5 follow-ups answered: **week-1 concepts understood → ready for DL.**
+- Small things to keep sharp (quick check on Monday):
+  - Q2: the 0.76 → 0.60 drop has a second cause, **drift** (data changed over time). Tell the manager **0.60**.
+  - Q3: picking the threshold on test = fitting a decision to those exact rows, so the score is optimistic.
+  - Q5: at prediction time the Pipeline **transforms** with the statistics learned in `fit`. It does **not** refit.
+    This avoids training/serving skew.
+
+### Fri 2026-11-06 (evening): skeleton started — **RESUME EXACTLY HERE**
+How we work on the skeleton: I write it myself; Claude gives hints, not code, then reviews.
+Skeleton = function names + type hints + docstring (with notebook cell number) + `...` body.
+Exception: `train.main()` contains real calls.
+
+Status of `src/hotel_cancel/`:
+| File | Status |
+|---|---|
+| `__init__.py` | ✅ empty, done |
+| `config.py` | ✅ written by Claude as a worked example. **TODO (me):** write why `required_car_parking_spaces` and `total_of_special_requests` were dropped |
+| `data.py` | ✅ written by Claude as a worked example: `load_raw → drop_unused_columns → add_dates → temporal_split → split_xy` |
+| `features.py` | ✅ mine, reviewed: `get_numerical_features`, `get_categorical_features`, `build_preprocessor(X)` (pass **X_train**) |
+| `evaluate.py` | 🟡 mine: `get_eval_metrics(y_true, y_prob, threshold)`, `get_best_threshold(y_true, y_prob, thresholds=config.THRESHOLD_CANDIDATES)`. **Leftover:** docstring of `get_best_threshold` still says `getEvalMetrics` + typos; add "on validation data"; spacing in its signature |
+| `train.py` | 🟡 **in progress (mine)** — `main()` steps 1–5 written |
+
+`train.py` review (to fix first thing):
+- **Bug:** `evaluate.build_preprocessor(X_train)` → must be `features.build_preprocessor(X_train)`.
+- Typo `preprocesor`; comment style `# Step 1: ...`; step numbering differs from the hint list (fine).
+
+`train.py` — what's left (hints were given, I try alone):
+6. Build the full model = preprocessor + classifier (`config.RF_PARAMS`). Maybe a helper `build_model(...)`.
+7. Fit on train.
+8. Probabilities on **validation** → `evaluate.get_best_threshold`.
+9. Probabilities on **test** → `evaluate.get_eval_metrics` **once**.
+10. Save the model: the dict keys must match `api/main.py` (`model`, `threshold`, `features`).
+    Create `models/` first if missing (see notebook cell 48).
+11. Save `reports/metrics.json` (decide: test metrics + validation F1 + chosen threshold?). Create `reports/` first.
+- Bonus question to think about: retrain on train + validation before the final test? Trade-off?
+- Not answered yet: none — just continue writing steps 6–11.
+
+After the skeleton is reviewed:
+- Set up `pyproject.toml` + `pip install -e .` (so `python -m hotel_cancel.train` works with the `src/` layout).
+  Until then, imports work with `PYTHONPATH=src`.
+- Fill in the function bodies by copying logic from the notebook; run `train.py`; compare
+  metrics with the notebook (val F1 ≈ 0.733, test F1 ≈ 0.60 at threshold 0.4).
 
 ### Next (in order)
-1. **Rebuild the model**: run the notebook with the current environment (the old
-   `.joblib` fails to load because it was made with an older scikit-learn:
-   `_RemainderColsList` error). Then check the API with `uvicorn api.main:app --reload` → `/docs`.
-2. **Skeleton**: create `src/hotel_cancel/` files with function names + one-line docstrings only.
-3. **Notes** in `notes/week1.md` (no looking things up):
-   - Why did I drop `reservation_status` and `booking_changes`?
-   - Why did F1 fall from 0.76 (random split) to 0.60 (time-based split), and which number would I tell a hotel manager?
-4. **Fri**: answer the week-1 self-check table + LinkedIn post about the 0.76 → 0.60 finding.
-5. **Sat (build, 4h)**: move the code into `src/`; `train.py` rebuilds the model with one command;
-   add a LightGBM/XGBoost experiment; log every experiment in `reports/experiments.md`.
-6. **Sun (validate, 4h)**: typed Pydantic request + fix `/predic` → `/predict`; add ROC-AUC/PR-AUC;
+1. **Sat (build, 4h)**: finish `train.py` skeleton → review → `pyproject.toml` → fill in bodies →
+   `train.py` rebuilds the model with one command; then add a LightGBM/XGBoost experiment;
+   log every experiment in `reports/experiments.md`.
+2. **Before publishing LinkedIn**: fix Q4 in `week1.md` (48%, not 0.48%). The post draft is ready
+   (Claude gave an example); **publish only when the repo is clean** (Sunday if ready, otherwise later).
+3. **Sun (validate, 4h)**: typed Pydantic request + fix `/predic` → `/predict`; add ROC-AUC/PR-AUC;
    compare train vs validation F1 (overfitting); read about `TimeSeriesSplit`; 2–3 tests; README with results + limitations.
 
 ### Target structure
