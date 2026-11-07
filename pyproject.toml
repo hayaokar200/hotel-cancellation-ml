@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hotel-cancel"
+version = "0.1.0"
+description = "ML project that predicts whether a hotel booking will be cancelled"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Haya Okar", email = "hayaokar20@hotmail.com" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+# Pinned runtime versions live in requirements.txt (one source of truth),
+# because the saved model depends on exact versions.
+dependencies = []
+
+# Our code is in src/, not in the project root.
+[tool.setuptools.packages.find]
+where = ["src"]
