@@ -14,6 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_PATH = PROJECT_ROOT / "data" / "hotel_bookings.csv"
 MODEL_PATH = PROJECT_ROOT / "models" / "hotel_cancellation_model.joblib"
 METRICS_PATH = PROJECT_ROOT / "reports" / "metrics.json"
+EXPERIMENTS_PATH = PROJECT_ROOT / "reports" / "experiments.md"
 
 # ---------- Target ----------
 TARGET = "is_canceled"
@@ -50,6 +51,10 @@ RF_PARAMS = {
     "random_state": RANDOM_STATE,
     "n_jobs": -1,
 }
+
+MODEL_NAME = 'lgb' #lgb or rf
+LGBM_PARAMS = {"random_state" : RANDOM_STATE}
+EVALUATE_TEST = False
 
 # ---------- Decision threshold — cell 40 ----------
 # Chosen on VALIDATION only. 0.4 was the best F1 in the notebook.
