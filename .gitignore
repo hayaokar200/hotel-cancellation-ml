@@ -9,3 +9,4 @@ data/
 models/*.joblib
 *.pyc
 ml-env/*.egg-info/
+.pytest_cache/
