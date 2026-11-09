@@ -11,3 +11,4 @@ models/*.joblib
 ml-env/*.egg-info/
 .pytest_cache/
 notes/
+*.egg-info/

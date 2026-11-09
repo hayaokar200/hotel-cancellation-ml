@@ -37,3 +37,16 @@ Decision: LightGBM — higher val F1 (0.741 vs 0.733), with both precision and r
 ---
 
 Final test result: F1 0.611 (precision 51%, recall 76%)
+
+## Experiment - 2026-11-09 11:45
+
+- **Model:** lgb
+- **Parameters:** `{'random_state': 42}`
+- **threshold:** 0.4000
+- **precision:** 0.6558
+- **recall:** 0.8510
+- **f1:** 0.7408
+- **roc_auc:** 0.8844
+- **average_precision:** 0.8573
+
+---

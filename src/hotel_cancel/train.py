@@ -93,7 +93,6 @@ def main():
         f.write(f"\n## Experiment - {datetime.now():%Y-%m-%d %H:%M}\n")
         f.write(f"- **Model:** {config.MODEL_NAME}\n")
         f.write(f"- **Parameters:** `{params}`\n")
-        f.write(f"- **Threshold:** `{threshold}`\n")
         for metric, value in val_metrics.items():
             f.write(f"- **{metric}:** {value:.4f}\n")
 
