@@ -8,4 +8,6 @@ __pycache__/
 data/
 models/*.joblib
 *.pyc
-ml-env/
+ml-env/*.egg-info/
+.pytest_cache/
+notes/
