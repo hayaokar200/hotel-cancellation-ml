@@ -50,3 +50,41 @@ Final test result: F1 0.611 (precision 51%, recall 76%)
 - **average_precision:** 0.8573
 
 ---
+
+## Experiment - 2026-11-15 11:33
+
+- **Model:** torch_nn
+- **Parameters:** `{'hidden': 64, 'epochs': 100, 'lr': 0.01}`
+- **threshold:** 0.3000
+- **precision:** 0.6429
+- **recall:** 0.8201
+- **f1:** 0.7208
+- **roc_auc:** 0.8648
+- **average_precision:** 0.8425
+
+---
+
+## Experiment - 2026-11-15 11:36
+
+- **Model:** torch_logreg
+- **Parameters:** `{'hidden': Nan, 'epochs': 100, 'lr': 0.01}`
+- **threshold:** 0.4000
+- **precision:** 0.6998
+- **recall:** 0.7184
+- **f1:** 0.7090
+- **roc_auc:** 0.8497
+- **average_precision:** 0.8291
+
+---
+
+## Experiment - 2026-11-15 11:52
+- **Model:** lgb
+- **Parameters:** `{'random_state': 42}`
+- **threshold:** 0.4000
+- **precision:** 0.6558
+- **recall:** 0.8510
+- **f1:** 0.7408
+- **roc_auc:** 0.8844
+- **average_precision:** 0.8573
+
+---

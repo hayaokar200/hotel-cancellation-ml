@@ -17,6 +17,26 @@ time, and it catches about 3 out of 4 real cancellations.
 Decision threshold: **0.4**, chosen on the validation set. All experiments are logged in
 [`reports/experiments.md`](reports/experiments.md).
 
+## Neural network comparison (PyTorch)
+
+To check whether deep learning helps on this tabular data, I trained two PyTorch models on exactly
+the same split and the same 224 preprocessed features, and compared them on validation:
+
+| Model (validation) | F1 | ROC-AUC | PR-AUC |
+|---|---|---|---|
+| **LightGBM (chosen)** | **0.741** | **0.884** | **0.857** |
+| Neural network (224 → 64 → ReLU → 1) | 0.721 | 0.865 | 0.843 |
+| Logistic regression (one linear layer) | 0.709 | 0.850 | 0.829 |
+
+- The hidden layer helps: the network learns feature interactions that a linear model can't.
+- Gradient-boosted trees still win, which is typical for tabular data. LightGBM stays the chosen
+  model, so the PyTorch models were not evaluated on the test set.
+- The training curve shows early overfitting: after about 15 epochs, training loss keeps falling
+  while validation loss flattens. Early stopping, dropout or weight decay are the next things to try.
+
+Run it with `python -m hotel_cancel.train_torch` (settings in `TORCH_PARAMS` in `config.py`;
+`hidden: None` trains logistic regression). Runs are appended to `reports/experiments.md`.
+
 ## Approach
 
 - **Time-based split.** Bookings are sorted by booking date (arrival date − lead time) and split
@@ -34,6 +54,7 @@ Decision threshold: **0.4**, chosen on the validation set. All experiments are l
   default (`EVALUATE_TEST` in `config.py`) so experiments can't accidentally use it.
 - **Model as a setting.** The classifier is chosen in `config.py` (`MODEL_NAME = "rf"` or `"lgb"`),
   so a new experiment changes one thing and nothing else.
+  The PyTorch models have their own settings in `TORCH_PARAMS`.
 
 ## Limitations
 
@@ -59,6 +80,7 @@ src/hotel_cancel/
   features.py    # preprocessing (ColumnTransformer)
   evaluate.py    # metrics and threshold selection
   train.py       # one command: rebuild the model, save it and the metrics
+  train_torch.py # PyTorch logistic regression / small NN, compared on validation
 api/main.py      # FastAPI service with a typed request schema
 tests/           # API tests (pytest)
 reports/         # metrics.json, experiments.md

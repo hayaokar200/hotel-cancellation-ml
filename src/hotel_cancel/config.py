@@ -52,10 +52,12 @@ RF_PARAMS = {
     "n_jobs": -1,
 }
 
-MODEL_NAME = 'lgb' #lgb or rf
+MODEL_NAME = 'lgb' #lgb or rf 
 LGBM_PARAMS = {"random_state" : RANDOM_STATE}
 EVALUATE_TEST = False
 
 # ---------- Decision threshold — cell 40 ----------
 # Chosen on VALIDATION only. 0.4 was the best F1 in the notebook.
 THRESHOLD_CANDIDATES = [0.2, 0.3, 0.4, 0.5, 0.6]
+
+TORCH_PARAMS = {"hidden": 64, "epochs": 100, "lr": 0.01} 
